@@ -23,8 +23,7 @@ object Studentify {
                              useConfigureForProjects,
                              initAsGitRepo,
                              isADottyProject,
-                             autoReloadOnBuildDefChange
-    ) = cmdOptions.get
+                             autoReloadOnBuildDefChange) = cmdOptions.get
 
     val mainRepo = resolveMainRepoPath(mainRepoPath)
     implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
@@ -50,23 +49,28 @@ object Studentify {
     copyMain(cleanMainRepo, targetCourseFolder)
     hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
-    createSbtRcFile(targetCourseFolder)
-    createStudentifiedBuildFile(targetCourseFolder,
-                                multiJVM,
-                                isADottyProject,
-                                autoReloadOnBuildDefChange
-    )
-    val templateFileList: List[String] =
-      List(
-        "Man.scala",
-        "Navigation.scala",
-        "Pssr.scala",
-        "StudentCommandsPlugin.scala",
-        "StudentKeys.scala",
-        "Zip.scala"
+
+    if(config.studentTooling == StudentTooling.SBT) {
+      createSbtRcFile(targetCourseFolder)
+      createStudentifiedBuildFile(targetCourseFolder,
+        multiJVM,
+        isADottyProject,
+        autoReloadOnBuildDefChange
       )
-    addSbtCommands(templateFileList, targetCourseFolder)
-    loadStudentSettings(mainRepo, targetCourseFolder)
+
+      val templateFileList: List[String] =
+        List(
+          "Man.scala",
+          "Navigation.scala",
+          "Pssr.scala",
+          "StudentCommandsPlugin.scala",
+          "StudentKeys.scala",
+          "Zip.scala"
+        )
+      addSbtCommands(templateFileList, targetCourseFolder)
+      writeStudentSettingsSBT(mainRepo, targetCourseFolder)
+    }
+    writeStudentSettings(targetCourseFolder)
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
     sbtio.delete(tmpDir)
     if (initAsGitRepo) initialiseAsGit(mainRepo, targetCourseFolder)

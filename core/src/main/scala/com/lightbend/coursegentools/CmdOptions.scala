@@ -41,8 +41,7 @@ case class LinearizeCmdOptions(mainRepo: File = new File("."),
                                configurationFile: Option[String] = None,
                                isADottyProject: Boolean = false,
                                autoReloadOnBuildDefChange: Boolean = true,
-                               bareLinRepo: Boolean = false
-)
+                               bareLinRepo: Boolean = false)
 
 case class DeLinearizeCmdOptions(mainRepo: File = new File("."),
                                  linearRepo: File = new File("."),
